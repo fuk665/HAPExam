@@ -11,13 +11,14 @@
 		<result column="item_description" property="itemDescription" jdbcType="VARCHAR" />
 	</resultMap>
 	
-	<!--物料LOV查询 -->
+	<!--物料查询 -->
 	<select id="queryAllItems" resultMap="invInventoryItems">
-	select oh.HEADER_ID,i.inventory_item_id,i.item_code,i.item_description
-	from
-	HAP_OM_ORDER_HEADERS oh left join HAP_OM_ORDER_LINES ol on
-ol.HEADER_ID=oh.HEADER_ID	 left join HAP_INV_INVENTORY_ITEMS
-	i on i.INVENTORY_ITEM_ID=ol.INVENTORY_ITEM_ID
+	SELECT 
+		oh.HEADER_ID,i.inventory_item_id,i.item_code,i.item_description
+	FROM
+		HAP_OM_ORDER_HEADERS oh left join HAP_OM_ORDER_LINES ol on
+		ol.HEADER_ID=oh.HEADER_ID  left join HAP_INV_INVENTORY_ITEMS i 
+		on i.INVENTORY_ITEM_ID=ol.INVENTORY_ITEM_ID
 	</select>
 	
 
