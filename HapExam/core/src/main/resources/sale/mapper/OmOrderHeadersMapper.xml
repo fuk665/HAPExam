@@ -20,12 +20,27 @@
 
 	<select id="queryItemsByClass" resultMap="allOrder"
 		parameterType="hbi.core.sale.dto.OmOrderHeaders">
-		 select distinct
-		oh.header_id,OH.ORDER_NUMBER,C.COMPANY_NAME,CU.CUSTOMER_NAME,OH.ORDER_DATE,OH.ORDER_STATUS,sm.mm as ORDERD_MONEY FROM HAP_OM_ORDER_HEADERS OH,HAP_ORG_COMPANYS
-		C,HAP_AR_CUSTOMERS CU,HAP_OM_ORDER_LINES OL,(select oh.header_id,sum(ol.unit_selling_price*ol.orderd_quantity)mm  from  HAP_OM_ORDER_HEADERS oh,HAP_OM_ORDER_LINES ol where	oh.header_id=ol.header_id group by oh.header_id)
-     sm WHERE
-		OH.COMPANY_ID=C.COMPANY_ID AND C.COMPANY_ID=OH.COMPANY_ID AND
-		OH.HEADER_ID=OL.HEADER_ID and oh.customer_id=cu.customer_id
+		
+SELECT distinct
+        OH.HEADER_ID,OH.ORDER_NUMBER,C.COMPANY_NAME,CU.CUSTOMER_NAME,OH.ORDER_DATE,OH.ORDER_STATUS,SM.MM as ORDERD_MONEY 
+    FROM 
+        HAP_OM_ORDER_HEADERS OH,
+        HAP_ORG_COMPANYS  C,
+        HAP_AR_CUSTOMERS CU,
+        HAP_OM_ORDER_LINES OL,
+        (SELECT  OH.HEADER_ID,sum(ol.unit_selling_price*ol.orderd_quantity)mm  
+                 FROM HAP_OM_ORDER_HEADERS OH,HAP_OM_ORDER_LINES OL
+    WHERE 
+        OH.HEADER_ID=ol.header_id 
+    GROUP BY oh.header_id)   sm   
+    WHERE
+        OH.COMPANY_ID=C.COMPANY_ID 
+    AND 
+        C.COMPANY_ID=OH.COMPANY_ID 
+    AND
+        OH.HEADER_ID=OL.HEADER_ID 
+    AND 
+        OH.CUSTOMER_ID=CU.CUSTOMER_ID
 		<if test="companyId != null">
 			and C.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
 		</if>
