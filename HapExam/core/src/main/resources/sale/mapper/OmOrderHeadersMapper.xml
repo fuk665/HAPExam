@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.sale.mapper.OmOrderHeadersMapper">
+<resultMap type="hbi.core.sale.dto.OmOrderHeaders" id="allOrder">
+		<result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+				<result column="header_id" property="headerId" jdbcType="DECIMAL" />
+		
+		<result column="ORDER_DATE" property="orderDate" jdbcType="DATE" />
+		<result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="ORDERD_MONEY" property="orderMoney" jdbcType="DECIMAL" />
+		<association property="orgCompany" javaType="hbi.core.sale.dto.OrgCompany">
+			<result property="companyName" column="COMPANY_NAME" jdbcType="VARCHAR" />
+		</association>
+		<association property="arCustomers" javaType="hbi.core.sale.dto.ArCustomers">
+			<result property="customerName" column="CUSTOMER_NAME" jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+
+	<select id="queryItemsByClass" resultMap="allOrder"
+		parameterType="hbi.core.sale.dto.OmOrderHeaders">
+		 select distinct
+		oh.header_id,OH.ORDER_NUMBER,C.COMPANY_NAME,CU.CUSTOMER_NAME,OH.ORDER_DATE,OH.ORDER_STATUS,sm.mm as ORDERD_MONEY FROM HAP_OM_ORDER_HEADERS OH,HAP_ORG_COMPANYS
+		C,HAP_AR_CUSTOMERS CU,HAP_OM_ORDER_LINES OL,(select oh.header_id,sum(ol.unit_selling_price*ol.orderd_quantity)mm  from  HAP_OM_ORDER_HEADERS oh,HAP_OM_ORDER_LINES ol where	oh.header_id=ol.header_id group by oh.header_id)
+     sm WHERE
+		OH.COMPANY_ID=C.COMPANY_ID AND C.COMPANY_ID=OH.COMPANY_ID AND
+		OH.HEADER_ID=OL.HEADER_ID and oh.customer_id=cu.customer_id
+		<if test="companyId != null">
+			and C.COMPANY_ID = #{companyId,jdbcType=DECIMAL}
+		</if>
+		<if test="customerId != null">
+			AND CU.CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+		</if>
+		<if test="orderNumber != null">
+			AND OH.ORDER_NUMBER like #{orderNumber,jdbcType=VARCHAR}
+		</if>
+		<if test="orderStatus != null">
+			AND OH.ORDER_STATUS like #{orderStatus,jdbcType=VARCHAR}
+		</if>
+		<!--如果头id为空 则说明 该物料无对应订单信息 该如何判断？  -->
+ 		<if test="headerId !=null">
+			AND oh.header_id = #{headerId,jdbcType=DECIMAL}
+		</if> 
+	</select>
+
+
+	<insert id="insertOrder" parameterType="hbi.core.sale.dto.OmOrderHeaders">
+		<selectKey resultType="Long" keyProperty="headerId" order="BEFORE">
+			select HAP_OM_ORDER_HEADERS_S.nextVal
+			from dual
+		</selectKey>
+		insert into HAP_OM_ORDER_HEADERS oh
+		(oh.header_id,oh.order_number,oh.company_id,oh.customer_id,oh.order_date,oh.order_status)
+		values
+		(#{headerId},#{orderNumber},#{companyId},#{customerId},#{orderDate},#{orderStatus})
+	</insert>
+
+
+	<!--订单明细页面返回类型 -->
+	<resultMap type="hbi.core.sale.dto.OmOrderHeaders" id="orderDetail">
+		<result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+		<result column="ORDER_DATE" property="orderDate" jdbcType="DATE" />
+		<result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+		<result column="ORDERD_MONEY" property="orderMoney" jdbcType="DECIMAL" />
+		<association property="orgCompany" javaType="hbi.core.sale.dto.OrgCompany">
+			<result property="companyName" column="COMPANY_NAME" jdbcType="VARCHAR" />
+		</association>
+		<association property="arCustomers" javaType="hbi.core.sale.dto.ArCustomers">
+			<result property="customerName" column="CUSTOMER_NAME"
+				jdbcType="VARCHAR" />
+		</association>
+		<association property="omOrderLines" javaType="hbi.core.sale.dto.OmOrderLines">
+			<result property="orderQuantityUom" column="order_quantity_uom"
+				jdbcType="VARCHAR" />
+			<result property="orderdQuantity" column="orderd_quantity"
+				jdbcType="DECIMAL" />
+			<result property="unitSellingPrice" column="unit_selling_price"
+				jdbcType="DECIMAL" />
+			<result property="description" column="description" jdbcType="VARCHAR" />
+			<result property="addition1" column="addition1" jdbcType="VARCHAR" />
+			<result property="addition2" column="addition2" jdbcType="VARCHAR" />
+			<result property="addition3" column="addition3" jdbcType="VARCHAR" />
+			<result property="addition4" column="addition4" jdbcType="VARCHAR" />
+			<result property="addition5" column="addition5" jdbcType="VARCHAR" />
+		</association>
+		<association property="invInventoryItems"
+			javaType="hbi.core.sale.dto.InvInventoryItems">
+			<result property="itemCode" column="item_code" jdbcType="VARCHAR" />
+			<result property="itemDescription" column="item_description"
+				jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+
+	<!--点击订单号查询详细信息 -->
+	<select id="queryDetailOrder" resultMap="orderDetail"
+		parameterType="hbi.core.sale.dto.OmOrderHeaders">
+		select
+		oh.order_number,c.company_name,cu.customer_name,oh.order_date,oh.order_status,i.item_code,i.item_description,ol.order_quantity_uom,ol.orderd_quantity,ol.unit_selling_price,(ol.unit_selling_price*ol.orderd_quantity)
+		as
+		ORDERD_MONEY,ol.description,ol.addition1,ol.addition2,ol.addition3,ol.addition4,ol.addition5
+		from HAP_OM_ORDER_HEADERS OH,HAP_OM_ORDER_LINES
+		OL,HAP_INV_INVENTORY_ITEMS I,HAP_AR_CUSTOMERS cu,HAP_ORG_COMPANYS c
+		where oh.company_id=c.company_id and oh.customer_id=cu.customer_id and
+		oh.header_id=ol.header_id and ol.inventory_item_id=i.inventory_item_id
+		<if test="orderNumber !=null">
+			and oh.order_number=#{orderNumber,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<resultMap type="hbi.core.sale.dto.OmOrderHeaders" id="conpany">
+		<result column="company_id" property="companyId" jdbcType="DECIMAL" />
+	</resultMap>
+	<select id="querysomeOrder" parameterType="Long" resultMap="conpany">
+	select company_id from HAP_OM_ORDER_HEADERS where header_id=#{id}
+	</select>
+</mapper>

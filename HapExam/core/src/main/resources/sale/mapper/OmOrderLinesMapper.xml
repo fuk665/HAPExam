@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.sale.mapper.OmOrderLinesMapper">
+
+<!--订单行插入  -->
+	<insert id="insertOrderLine" parameterType="hbi.core.sale.dto.OmOrderLines">
+	<selectKey resultType="Long" keyProperty="lineId" order="BEFORE">
+			select HAP_OM_ORDER_LINES_S.nextVal
+			from dual
+		</selectKey>
+		insert into HAP_OM_ORDER_LINES ol (ol.line_id,ol.header_id,ol.line_number,ol.inventory_item_id,ol.orderd_quantity,ol.order_quantity_uom,ol.unit_selling_price,ol.description,ol.company_id)
+ values (#{lineId},#{headerId},#{lineNumber},#{inventoryItemId},#{orderdQuantity},#{orderQuantityUom},#{unitSellingPrice},#{description},#{companyId})
+		
+	</insert>
+	
+	
+	<!--订单明细页面返回订单行 -->
+	<resultMap type="hbi.core.sale.dto.OmOrderLines" id="orderLineDetail">
+			<result property="headerId" column="header_id" jdbcType="DECIMAL" />
+			<result property="lineId" column="line_id" jdbcType="DECIMAL" />
+			<result property="companyId" column="company_id" jdbcType="DECIMAL" />
+			<result property="lineNumber" column="line_number" jdbcType="DECIMAL" />
+			<result property="orderQuantityUom" column="order_quantity_uom" jdbcType="VARCHAR" />
+			<result property="orderdQuantity" column="orderd_quantity" jdbcType="DECIMAL" />			
+			<result property="unitSellingPrice" column="unit_selling_price" jdbcType="DECIMAL" />
+			<result property="description" column="description" jdbcType="VARCHAR" />
+			<result property="inventoryItemId" column="inventory_item_id" jdbcType="DECIMAL" />
+			<result property="addition1" column="addition1" jdbcType="VARCHAR" />
+			<result property="addition2" column="addition2" jdbcType="VARCHAR" />
+			<result property="addition3" column="addition3" jdbcType="VARCHAR" />
+			<result property="addition4" column="addition4" jdbcType="VARCHAR" />
+			<result property="addition5" column="addition5" jdbcType="VARCHAR" />
+			<result column="ORDERD_MONEY" property="orderMoney" jdbcType="DECIMAL" />
+			<result property="itemDescription" column="item_description" jdbcType="VARCHAR" />
+			<association property="invInventoryItems"
+			javaType="hbi.core.sale.dto.InvInventoryItems">
+			<result property="itemCode" column="item_code" jdbcType="VARCHAR" />
+		</association>
+	</resultMap>
+
+	<!--查询订单行详细信息 -->
+	<select id="queryOrder" resultMap="orderLineDetail"
+		parameterType="hbi.core.sale.dto.OmOrderLines">
+		select
+		ol.line_id,ol.company_id,ol.line_number,i.inventory_item_id,ol.header_id,i.item_code,i.item_description,ol.order_quantity_uom,ol.orderd_quantity,ol.unit_selling_price,(ol.unit_selling_price*ol.orderd_quantity)
+		as
+		ORDERD_MONEY,ol.description,ol.addition1,ol.addition2,ol.addition3,ol.addition4,ol.addition5
+		from HAP_OM_ORDER_HEADERS OH,HAP_OM_ORDER_LINES
+		OL,HAP_INV_INVENTORY_ITEMS I
+		where 
+		oh.header_id=ol.header_id and ol.inventory_item_id=i.inventory_item_id
+		<if test="headerId !=null">
+			and oh.header_id = #{headerId,jdbcType=DECIMAL}
+		</if>
+	</select>
+	
+	 <!--更新订单行  -->
+  <update id="updateOrderLine" parameterType="hbi.core.sale.dto.OmOrderLines" >
+    update HAP_OM_ORDER_LINES
+    <set >
+      <if test="inventoryItemId != null" >
+        INVENTORY_ITEM_ID = #{inventoryItemId,jdbcType=DECIMAL},
+      </if>
+      <if test="orderdQuantity != null" >
+        ORDERD_QUANTITY = #{orderdQuantity,jdbcType=DECIMAL},
+      </if>
+      <if test="unitSellingPrice != null" >
+        UNIT_SELLING_PRICE = #{unitSellingPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="addition1 != null" >
+        ADDITION1 = #{addition1,jdbcType=VARCHAR},
+      </if>
+      <if test="addition2 != null" >
+        ADDITION2 = #{addition2,jdbcType=VARCHAR},
+      </if>
+      <if test="addition3 != null" >
+        ADDITION3 = #{addition3,jdbcType=VARCHAR},
+      </if>
+      <if test="addition4 != null" >
+        ADDITION4 = #{addition4,jdbcType=VARCHAR},
+      </if>
+      <if test="addition5 != null" >
+        ADDITION5 = #{addition5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where line_id = #{lineId,jdbcType=DECIMAL}
+  </update>
+  
+  <delete id="deleteOrderLine" parameterType="hbi.core.sale.dto.OmOrderLines">
+  	delete from HAP_OM_ORDER_LINES where line_id = #{lineId,jdbcType=DECIMAL}
+  </delete>
+  
+</mapper>

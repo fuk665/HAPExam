@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.sale.mapper.OrgCompanyMapper">
+	<resultMap type="hbi.core.sale.dto.OrgCompany" id="allConpany">
+	<result column="company_id" property="companyId" jdbcType="DECIMAL" />
+		<result column="company_number" property="companyNumber"
+			jdbcType="VARCHAR" />
+		<result column="company_name" property="companyName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="queryAllConpany" resultMap="allConpany">
+		SELECT
+		c.company_id,c.company_number,c.company_name FROM
+		HAP_ORG_COMPANYS c
+	</select>
+</mapper>

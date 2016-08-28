@@ -1,0 +1,395 @@
+<#--
+ * description: sales
+ * version: 1.0
+ * #copyright#
+ *
+-->
+<#include "../include/head.html">
+<body style="padding: 10px;">
+<form id="salesDetailForm"></form>
+<div class="liger-tab">
+<div title="HOMEPAGE">
+	<div id="salesDetailGrid" style="margin: 0; padding: 0"></div>
+</div>
+<div title="OTHERSPAGE">
+	<div id="salesOthersGrid" style="margin: 0; padding: 0"></div>
+</div>
+</div>
+<script type="text/javascript">
+     $(function () {
+    	 debugger;
+        window['salesDetailForm'] = $("#salesDetailForm").ligerForm({
+            fields : [{
+            	display:'orderNumber',
+                type : 'text',
+                newline : false,
+                width: 150,
+                name : 'orderNumber',
+                validate: {
+                    required: true
+                }
+            },{
+            	display:'company',
+                width:150,
+       		 	type : 'popup',
+                newline : false,
+                name:'orgCompany.companyNumber',
+                textField:'orgCompany.companyName',
+                validate: {
+                    required: true
+                },
+                options : {             
+                    valueField : 'companyNumber',//alueField
+                    textField : 'companyName',//textField 
+                    grid : {
+                        columns : [{
+                            display : 'companyNumber',
+                            name : "companyNumber",
+                            width : 120,
+                            type : "int"
+                        }, {
+	                            display : 'companyName',
+                            name : "companyName",
+                            width:120,
+                            type : "text"
+                        }],
+                        url : '${base.contextPath}/company/query'
+                    }
+                }
+        },{ 
+            	display:'customer',
+                type:'popup',
+                width:150,
+                newline : false,
+                name:'arCustomers.customerId',
+                textField:'arCustomers.customerName',
+                validate: {
+                    required: true
+                },
+                editor : {
+                    type : 'popup',
+                    valueField : 'customerId',//alueField
+                    textField : 'customerName',//textField 
+                    grid : {
+                        columns : [ {
+                            display : 'customerId',
+                            name : "customerId",
+                            width : 120,
+                            type : "int"
+                        }, {
+                            display : 'customerName',
+                            name : "customerName",
+                            width : 150, 	                            
+                            type : "text"
+                        }],
+                        url : '${base.contextPath}/customer/query'
+                    }
+                }
+            },{
+            	display : 'orderDate',
+                name : "orderDate",
+                align:'left',
+                type : 'date',
+                width:150,
+                editor : {
+                	type : 'date',
+                    options : {
+                       showTime : true
+                    }
+                },
+                validate: {
+                    required: true
+                }
+            },{ 
+            	display:'orderMoney',
+                type : 'text',
+                newline : false,
+                width: 150,
+                name : 'orderMoney'
+            },{
+            	display:'orderStatus',
+                type : 'select',
+                newline : false,
+                width: 150,
+                name : 'orderStatusId',
+                options : {
+	                valueField : 'orderStatusId',
+	                textField : 'orderStatus',
+	                data : [ {
+                        'value' : '1',
+                        'name' : 'ÐÂ½¨'
+                    }, {
+                        'value' : '4',
+                        'name' : 'ÒÑÉóÔÄ'
+                    } ]
+	            }
+            }],
+            buttons: [{
+                text    : 'SAVE',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                    
+                }
+            },{
+                text    : 'SUBMIT',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                    
+                }
+            },{
+                text    : 'CHECK',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                    
+                }
+            },{
+                text    : 'REFUSE',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                    
+                }
+            },{
+                text    : 'DELETE',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                    
+                }
+            },{
+                text    : 'PRINT',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                    
+                }
+            },{
+                text    : 'BACK',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                }
+            }]
+        }); 
+
+        window['salesDetailGrid'] = $("#salesDetailGrid").ligerGrid({
+            unSetValidateAttr: false,
+            columns  : [{
+                display: 'ROW_NUM',
+                name   : 'lineId',
+                align  : 'left',
+                width  : 100,
+                editor : {
+                	type : 'text'
+                },
+                validate: {
+                    required: true
+                }
+            },{ 
+            	display:'item',
+                width:120,
+       		 	type : 'popup',
+                newline : false,
+                name:'inventoryItemId',
+                textField:'itemCode',
+                validate: {
+                    required: true
+                },
+                editor : {
+                    type : 'popup',
+                    valueField : 'inventoryItemId',//alueField
+                    textField : 'itemCode',//textField 
+                    grid : {
+                    	 columns : [{
+                             display : 'inventoryItemId',
+                             name : "inventoryItemId",
+                             width : 120,
+                             type : "int"
+                         }, {
+                             display : 'itemDescription',
+                             name : "itemDescription",
+                             width:120,
+                             type : "text"
+                         }],
+                        url : '${base.contextPath}/item/query'
+                    }
+                }
+            },{
+                display: 'itemDescription',
+                name   : 'itemDescription',
+                align  : 'left',
+                width  : 120
+            },{
+                display: 'orderQuantityUom',
+                name   : 'orderQuantityUom',
+                align  : 'left',
+                width  : 120
+            },{
+                display: 'orderdQuantity',
+                name   : 'orderdQuantity',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                	type : 'text'
+                },
+                validate: {
+                    required: true
+                }
+            },{
+                display: 'unitSellingPrice',
+                name   : 'unitSellingPrice',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                	type : 'text'
+                },
+                validate: {
+                    required: true
+                }
+            },{
+                display: 'orderMoney',
+                name   : 'orderMoney',
+                align  : 'left',
+                width  : 120
+            },{
+                display: 'description',
+                name   : 'description',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                	type : 'text'
+                },
+                validate: {
+                    required: true
+                }
+            }],
+            url: '${base.contextPath}/sale/attachs?id='+${id},
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                    	salesDetailGrid.addRow({invInventoryItems:{}})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        salesDetailGrid.deleteSelectedRow();
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : salesDetailGrid,
+                            url : '${base.contextPath}/sale/OrderLinesubmit?id='+${id},
+                        })
+                    },
+                    icon : 'save'
+                } ]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '98%',
+            checkbox : true
+        });
+        
+        window['salesOthersGrid'] = $("#salesOthersGrid").ligerGrid({
+            unSetValidateAttr: false,
+            columns          : [{
+                display: 'ROW_NUM',
+                name   : 'ROW_NUM',
+                align  : 'left',
+                width  : 100
+            },{
+                display: 'attach1',
+                name   : 'attach1',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                	type : 'text'
+                }
+            },{
+                display: 'attach2',
+                name   : 'attach2',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                	type : 'text'
+                }
+            },{
+                display: 'attach3',
+                name   : 'attach3',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                	type : 'text'
+                }
+            },{
+                display: 'attach4',
+                name   : 'attach4',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                	type : 'text'
+                }
+            },{
+                display: 'attach5',
+                name   : 'addition5',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                	type : 'text'
+                }
+            }],
+            url: '${base.contextPath}/sale/attachs?id='+${id},
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                        filmGrid.addRow()
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                          Hap.gridDelete({
+                            grid : filmGrid,
+                            url : '${base.contextPath}/sale/submit'
+                        })  
+                    	filmGrid.deleteSelectedRow();
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : filmGrid,
+                            url : '${base.contextPath}/sale/submit'
+                        })
+                    },
+                    icon : 'save'
+                } ]
+            },
+            enabledEdit      : true,
+            width            : '99%',
+            height           : '98%',
+            checkbox         : true
+        });
+    });
+</script>
+</body>
+</html>

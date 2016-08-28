@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ~ #{copyright}# -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.sale.mapper.ArCustomersMapper">
+
+<resultMap type="hbi.core.sale.dto.ArCustomers" id="arCustomers">
+	<result column="customer_id" property="customerId" jdbcType="DECIMAL" />
+		<result column="customer_number" property="customerNumber" jdbcType="VARCHAR" />
+		<result column="customer_name" property="customerName" jdbcType="VARCHAR" />
+	</resultMap>
+	<!--客户LOV查询 -->
+	<select id="queryAllCustomer" resultMap="arCustomers"
+		parameterType="hbi.core.sale.dto.OrgCompany">
+		select cu.customer_id,cu.customer_number,cu.customer_name from HAP_AR_CUSTOMERS cu
+ 		<where>
+			<if test="companyId !=null">
+				and cu.company_id=#{companyId, jdbcType=DECIMAL}
+			</if>
+		</where>
+	</select>
+
+
+</mapper>
