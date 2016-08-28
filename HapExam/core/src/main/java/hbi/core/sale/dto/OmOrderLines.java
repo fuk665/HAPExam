@@ -14,7 +14,6 @@ import com.hand.hap.system.dto.BaseDTO;
 @Table(name="hap_om_order_lines")
 public class OmOrderLines extends BaseDTO{
 
-
 	@Column
 	private Long lineId;
 	
@@ -23,31 +22,44 @@ public class OmOrderLines extends BaseDTO{
 	
 	@Column
 	private Long lineNumber;
+	
 	@Column
 	private Long inventoryItemId;
+	
 	@Column
 	private Long orderdQuantity;
+	
 	@Column
 	private String orderQuantityUom;
+	
 	@Column
 
 	private Long unitSellingPrice;
+	
 	@Column
 	private String description;
+	
 	@Column
 	private Long companyId;
+	
 	@Column
 	private String addition1;
+	
 	@Column
 	private String addition2;
+	
 	@Column
 	private String addition3;
+	
 	@Column
 	private String addition4;
+	
 	@Column
 	private String addition5;
+	
 	@Column
 	private Long requestId;
+	
 	@Column
 	private Long programId;
 	
@@ -58,8 +70,6 @@ public class OmOrderLines extends BaseDTO{
 	
 	@Transient
 	private String itemDescription;
-	
-	
 	
 	public String getItemDescription() {
 		return itemDescription;
