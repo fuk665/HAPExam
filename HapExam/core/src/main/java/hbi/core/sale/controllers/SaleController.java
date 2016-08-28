@@ -45,6 +45,7 @@ public class SaleController extends BaseController{
 	@Autowired
 	IInvInventoryItemsService invInventoryItemsService;
 	
+	//订单显示
 	@RequestMapping("/sale/showallorder")
 	@ResponseBody
 	public ResponseData showallorder(OmOrderHeaders omOrderHeaders,BindingResult result,@RequestParam(defaultValue = DEFAULT_PAGE) int page,
@@ -53,6 +54,7 @@ public class SaleController extends BaseController{
 		
 	}
 	
+	//分页查询公司
 	@RequestMapping("/company/query")
 	@ResponseBody
 	public ResponseData querycompany(@RequestParam(defaultValue = DEFAULT_PAGE) int page,
@@ -61,6 +63,7 @@ public class SaleController extends BaseController{
 		
 	}
 	
+	//查询客户
 	@RequestMapping(value="/customer/query",method=RequestMethod.POST)
 	@ResponseBody
 	public ResponseData querycustomer(ArCustomers arcustomers,@RequestParam(defaultValue = DEFAULT_PAGE) int page,
@@ -87,7 +90,7 @@ public class SaleController extends BaseController{
 				
 	}
 	
-	//页面1标题栏总查询
+	//头信息分页查询
 	@RequestMapping(value="/sale/queryByClass")
 	@ResponseBody
 	public ResponseData queryByClass(OmOrderHeaders omOrderHeaders,@RequestParam(defaultValue = DEFAULT_PAGE) int page,
@@ -97,18 +100,17 @@ public class SaleController extends BaseController{
 	}
 
 	
-	//表2尾查询
+	//查询
 	@RequestMapping(value="/sale/attachs")
 	@ResponseBody
 	public ResponseData queryDetailOrder(OmOrderLines omOrderLines,String id,@RequestParam(defaultValue = DEFAULT_PAGE) int page,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pagesize, HttpServletRequest request){
 		Long s1=(long) Integer.parseInt(id);
 		omOrderLines.setHeaderId(s1);
-		
 		return new ResponseData(omOrderLinesService.queryOrder(createRequestContext(request),page, pagesize,omOrderLines));		
 	}
 	
-	//表2尾插入
+	//订单行信息操作
 	@RequestMapping("/sale/OrderLinesubmit")
 	@ResponseBody
 	public ResponseData filmsubmit(@RequestBody List<OmOrderLines> orderline,BindingResult result,String id,HttpServletRequest request){
@@ -118,11 +120,8 @@ public class SaleController extends BaseController{
 	            rd.setMessage(getErrorMessage(result, request));
 	            return rd;
 	        }	
-	        
 	        Long s1=(long) Integer.parseInt(id);
-	      
 	        OmOrderHeaders om=OmOrderHeadersService.querysomeOrder(s1);
-	        System.out.println("zzzzzzzzzzzzzzzzzzzz"+om.getCompanyId());
 	        for(OmOrderLines s:orderline){
 	        	s.setHeaderId(s1);
 	        	s.setCompanyId(om.getCompanyId());
