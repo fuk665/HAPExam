@@ -12,7 +12,10 @@
 	<!--客户LOV查询 -->
 	<select id="queryAllCustomer" resultMap="arCustomers"
 		parameterType="hbi.core.sale.dto.OrgCompany">
-		select cu.customer_id,cu.customer_number,cu.customer_name from HAP_AR_CUSTOMERS cu
+		SELECT 
+			cu.customer_id,cu.customer_number,cu.customer_name 
+		FROM
+			HAP_AR_CUSTOMERS cu
  		<where>
 			<if test="companyId !=null">
 				and cu.company_id=#{companyId, jdbcType=DECIMAL}
