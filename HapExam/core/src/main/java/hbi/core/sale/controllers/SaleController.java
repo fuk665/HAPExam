@@ -83,7 +83,7 @@ public class SaleController extends BaseController{
 	
 	@RequestMapping("/order/topage")
 	public ModelAndView changpage(String id){		
-		ModelAndView view=new ModelAndView(getViewPath()+"/sale/sales_detail");
+		ModelAndView view=new ModelAndView(getViewPath()+"/sale/order_detail");
 		System.out.println(id);
 		view.addObject("id", id);
 		return view;
