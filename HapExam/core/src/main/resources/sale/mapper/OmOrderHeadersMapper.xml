@@ -22,7 +22,21 @@
 		parameterType="hbi.core.sale.dto.OmOrderHeaders">
 		
 SELECT distinct
-        OH.HEADER_ID,OH.ORDER_NUMBER,C.COMPANY_NAME,CU.CUSTOMER_NAME,OH.ORDER_DATE,OH.ORDER_STATUS,SM.MM as ORDERD_MONEY 
+        OH.HEADER_ID,
+        OH.ORDER_NUMBER,
+        C.COMPANY_NAME,
+        CU.CUSTOMER_NAME,
+        OH.ORDER_DATE,
+        
+        <!--OH.ORDER_STATUS,-->
+        CASE OH.ORDER_STATUS
+        WHEN 'NEW' THEN '新建'
+        WHEN 'SUBMITED' THEN '已提交'
+        WHEN 'APPROVED' THEN '已审批'
+        WHEN 'REJECTED' THEN '已拒绝'
+        END "ORDER_STATUS",
+        
+        SM.MM as ORDERD_MONEY 
     FROM 
         HAP_OM_ORDER_HEADERS OH,
         HAP_ORG_COMPANYS  C,
