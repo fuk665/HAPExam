@@ -53,7 +53,7 @@ SELECT distinct
 		<if test="orderStatus != null">
 			AND OH.ORDER_STATUS like #{orderStatus,jdbcType=VARCHAR}
 		</if>
-		<!--如果头id为空 则说明 该物料无对应订单信息 该如何判断？  -->
+		
  		<if test="headerId !=null">
 			AND oh.header_id = #{headerId,jdbcType=DECIMAL}
 		</if> 
